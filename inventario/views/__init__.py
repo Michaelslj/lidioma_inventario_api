@@ -1,1 +1,1 @@
-# store/views/__init__.py
+# inventario/views/__init__.py
