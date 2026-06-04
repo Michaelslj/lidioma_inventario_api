@@ -9,3 +9,4 @@ from .user import (
 from .categoria import CategoriaSerializer
 from .producto  import SerializerResumenProducto, SerializerProducto
 from .movimiento_inventario import SerializerMovimientoInventario
+from .proveedor import SerializerProveedor

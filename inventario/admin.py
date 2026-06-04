@@ -1,6 +1,6 @@
 # inventario/admin.py
 from django.contrib import admin
-from inventario.models import Categoria, Producto, MovimientoInventario
+from inventario.models import Categoria, Producto, MovimientoInventario, Proveedor
 
 
 @admin.register(Categoria)
@@ -26,3 +26,11 @@ class MovimientoInventarioAdmin(admin.ModelAdmin):
     search_fields = ['producto__nombre', 'motivo']
     ordering = ['-creado_en']
     readonly_fields = ['producto', 'tipo', 'cantidad', 'usuario', 'creado_en']
+
+
+@admin.register(Proveedor)
+class ProveedorAdmin(admin.ModelAdmin):
+    list_display  = ['id', 'nombre', 'ruc', 'telefono', 'es_activo', 'creado_en']
+    list_filter   = ['es_activo', 'creado_en']
+    search_fields = ['nombre', 'ruc']
+    list_editable = ['es_activo']

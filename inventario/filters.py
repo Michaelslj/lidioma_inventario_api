@@ -1,6 +1,6 @@
 # inventario/filters.py
 import django_filters
-from inventario.models import Categoria, Producto, MovimientoInventario
+from inventario.models import Categoria, Producto, MovimientoInventario, Proveedor
 
 
 class FiltroCategoria(django_filters.FilterSet):
@@ -36,3 +36,12 @@ class FiltroMovimientoInventario(django_filters.FilterSet):
     class Meta:
         model = MovimientoInventario
         fields = ['tipo', 'producto', 'usuario']
+
+
+class FiltroProveedor(django_filters.FilterSet):
+    nombre = django_filters.CharFilter(lookup_expr='icontains')
+    ruc    = django_filters.CharFilter(lookup_expr='exact')
+
+    class Meta:
+        model  = Proveedor
+        fields = ['es_activo']

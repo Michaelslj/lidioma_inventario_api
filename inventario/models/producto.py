@@ -1,32 +1,51 @@
-# inventario/models/product.py
+# inventario/models/producto.py
 from django.db import models
-from .categoria import Categoria
+from django.core.validators import MinValueValidator
+
 
 
 class Producto(models.Model):
-    nombre = models.CharField(max_length=200)
-    descripcion = models.TextField(blank=True, default='')
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
-    stock = models.PositiveIntegerField(default=0)
-    es_activo = models.BooleanField(default=True)
     categoria = models.ForeignKey(
-        Categoria,
+        'inventario.Categoria',
         on_delete=models.PROTECT,
-        related_name='products',
+        related_name='productos',
+        verbose_name='Categoría'
     )
-    creado_en = models.DateTimeField(auto_now_add=True)
-    actualizado_en = models.DateTimeField(auto_now=True)
+    nombre = models.CharField(
+        max_length=150,
+        verbose_name='Nombre del Producto'
+    )
+    descripcion = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name='Descripción'
+    )
+    precio = models.DecimalField(
+        max_length=10,
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0.01)],
+        verbose_name='Precio de Venta'
+    )
+    stock = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name='Stock Actual'
+    )
+    es_activo = models.BooleanField(
+        default=True,
+        verbose_name='¿Está Activo?'
+    )
+    creado_en = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Fecha de Registro'
+    )
 
     class Meta:
+        db_table = 'inventario_producto'
+        verbose_name = 'Producto'
+        verbose_name_plural = 'Productos'
         ordering = ['nombre']
 
     def __str__(self):
-        return self.nombre
-
-    @property
-    def precio_con_impuesto(self):
-        return round(float(self.precio) * 1.15, 2)
-
-    @property
-    def en_stock(self):
-        return self.stock > 0
+        return f"{self.nombre} (${self.precio})"
