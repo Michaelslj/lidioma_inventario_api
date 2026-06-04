@@ -5,19 +5,18 @@ from inventario.models import Categoria
 
 
 class CategoriaSerializer(serializers.ModelSerializer):
-    """
-    El campo total_productos se agregará en la Etapa 4
-    cuando el modelo Producto ya exista.
-    Incluirlo antes provoca AttributeError.
-    """
+    total_productos = serializers.SerializerMethodField()
 
     class Meta:
         model = Categoria
         fields = [
             'id', 'nombre', 'slug', 'descripcion',
-            'activa', 'creado_en',
+            'activa', 'total_productos', 'creado_en',
         ]
         read_only_fields = ['id', 'creado_en']
+
+    def get_total_productos(self, obj):
+        return obj.products.filter(es_activo=True).count()
 
     def validate_slug(self, value):
         return slugify(value)

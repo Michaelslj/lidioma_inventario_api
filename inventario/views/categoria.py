@@ -9,7 +9,7 @@ from django.db.models import Count
 from inventario.models import Categoria
 from inventario.serializers.categoria import CategoriaSerializer
 from inventario.permissions import EsStaffOSoloLectura
-from inventario.filters import CategoriaFilter
+from inventario.filters import FiltroCategoria
 from inventario.pagination import StandardPagination
 
 
@@ -19,18 +19,24 @@ class CategoriaViewSet(viewsets.ModelViewSet):
     permission_classes = [EsStaffOSoloLectura]
     pagination_class = StandardPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_class = CategoriaFilter
+    filterset_class = FiltroCategoria
     search_fields = ['nombre', 'descripcion']
     ordering_fields = ['nombre', 'creado_en']
     ordering = ['nombre']
 
     @action(detail=True, methods=['get'], url_path='productos')
     def productos(self, request, pk=None):
-        """
-        Retorna lista vacía hasta la Etapa 4
-        cuando se cree el modelo Producto.
-        """
-        return Response([])
+        from inventario.models import Producto
+        from inventario.serializers.producto import SerializadorResumenProducto
+        
+        category = self.get_object()
+        qs   = category.products.filter(es_activo=True).order_by('nombre')
+        page = self.paginate_queryset(qs)
+        if page is not None:
+            return self.get_paginated_response(
+                SerializadorResumenProducto(page, many=True).data
+            )
+        return Response(SerializadorResumenProducto(qs, many=True).data)
 
     @action(detail=False, methods=['get'], url_path='estadisticas')
     def estadisticas(self, request):

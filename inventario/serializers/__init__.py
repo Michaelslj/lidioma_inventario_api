@@ -7,3 +7,5 @@ from .user import (
     ChangePasswordSerializer,
 )
 from .categoria import CategoriaSerializer
+from .producto  import SerializerResumenProducto, SerializerProducto
+from .movimiento_inventario import SerializerMovimientoInventario

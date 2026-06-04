@@ -7,11 +7,15 @@ from inventario.views.health import health_check
 from inventario.views.auth import RegisterView, LogoutView
 from inventario.views.user import UserViewSet
 from inventario.views.categoria import CategoriaViewSet
+from inventario.views.product import ConjuntoVistasProducto
+from inventario.views.movimiento_inventario import MovimientoInventarioViewSet 
 from inventario.serializers.auth import CustomTokenView
 
 router = DefaultRouter()
 router.register('users', UserViewSet, basename='user')
 router.register('categorias', CategoriaViewSet, basename='categoria')
+router.register('productos', ConjuntoVistasProducto, basename='producto')
+router.register('movimientos', MovimientoInventarioViewSet, basename='movimiento-inventario')  
 
 urlpatterns = [
     path('health/', health_check),
