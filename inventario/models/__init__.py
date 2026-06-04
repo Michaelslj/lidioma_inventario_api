@@ -3,5 +3,6 @@ from .categoria import Categoria
 from .producto import Producto 
 from .movimiento_inventario import MovimientoInventario
 from .proveedor import Proveedor
+from .orden_compra import OrdenCompra
 
-__all__ = ['Categoria', 'Producto', 'MovimientoInventario', 'Proveedor']
+__all__ = ['Categoria', 'Producto', 'MovimientoInventario', 'Proveedor', 'OrdenCompra']

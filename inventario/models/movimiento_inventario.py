@@ -2,7 +2,8 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.contrib.auth import get_user_model
-from inventario.models import Producto
+
+# 🪓 ELIMINAMOS las importaciones directas para evitar bucles circulares infinitos
 
 User = get_user_model()
 
@@ -15,10 +16,18 @@ class MovimientoInventario(models.Model):
     ]
 
     producto = models.ForeignKey(
-        Producto,
+        'inventario.Producto',
         on_delete=models.CASCADE,
         related_name='movimientos',
         verbose_name='Producto'
+    )
+    proveedor = models.ForeignKey(
+        'inventario.Proveedor',
+        on_delete=models.PROTECT,
+        related_name='movimientos',
+        null=True,
+        blank=True,
+        verbose_name='Proveedor'
     )
     tipo = models.CharField(
         max_length=15,
@@ -56,10 +65,6 @@ class MovimientoInventario(models.Model):
         return f"{self.tipo} - {self.producto.nombre} ({self.cantidad})"
 
     def save(self, *args, **kwargs):
-        """
-        Lógica automática para actualizar el stock del producto
-        al registrar un movimiento.
-        """
         es_nuevo = self.pk is None
         
         if es_nuevo:
