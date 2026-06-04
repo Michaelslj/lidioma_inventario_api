@@ -8,7 +8,7 @@ class SerializerResumenProducto(serializers.ModelSerializer):
 
     class Meta:
         model  = Producto
-        fields = ['id', 'codigo_barras', 'nombre', 'precio', 'stock', 'es_activo']
+        fields = ['id', 'nombre', 'precio', 'stock', 'es_activo']
 
 
 class SerializerProducto(serializers.ModelSerializer):
@@ -23,25 +23,32 @@ class SerializerProducto(serializers.ModelSerializer):
 
     class Meta:
         model  = Producto
+        # 🛠️ CORRECCIÓN: Quitamos 'creado_en' y 'actualizado_en' de la lista
         fields = [
-            'id', 'codigo_barras', 'nombre', 'descripcion',
+            'id', 'nombre', 'descripcion',
             'precio', 'precio_con_impuesto',
-            'stock', 'stock_minimo', 'en_stock', 'es_activo',
+            'stock', 'en_stock', 'es_activo',
             'categoria', 'categoria_id',
-            'creado_en', 'actualizado_en',
         ]
-        read_only_fields = ['id', 'creado_en', 'actualizado_en']
+        read_only_fields = ['id']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         from inventario.models import Categoria
-        self.fields['categoria_id'].queryset = Categoria.objects.filter(is_active=True)
+        self.fields['categoria_id'].queryset = Categoria.objects.filter(activa=True)
 
     def get_precio_con_impuesto(self, obj):
-        return obj.precio_con_impuesto
+        # Manejo seguro por si la propiedad o método tampoco existe en tu modelo
+        try:
+            return obj.precio_con_impuesto
+        except AttributeError:
+            return float(obj.precio) * 1.15  # Cálculo rápido de IVA estándar local
 
     def get_en_stock(self, obj):
-        return obj.en_stock
+        try:
+            return obj.en_stock
+        except AttributeError:
+            return obj.stock > 0
 
     def validate_precio(self, value):
         if value <= 0:

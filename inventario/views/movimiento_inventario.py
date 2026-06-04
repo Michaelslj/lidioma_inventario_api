@@ -8,23 +8,15 @@ from inventario.filters import FiltroMovimientoInventario
 
 
 class MovimientoInventarioViewSet(viewsets.ModelViewSet):
-
-    queryset = MovimientoInventario.objects.select_related('producto', 'usuario').all()
+    queryset = MovimientoInventario.objects.select_related(
+        'producto', 'usuario', 'proveedor'
+    ).all()
     serializer_class = SerializerMovimientoInventario
-    
     permission_classes = [permissions.IsAuthenticated]
     
-    filter_backends = [
-        DjangoFilterBackend, 
-        filters.SearchFilter, 
-        filters.OrderingFilter
-    ]
-    
-    filterset_class = FiltroMovimientoInventario
-    
-    ordering_fields = ['creado_en', 'cantidad']
-    ordering = ['-creado_en'] 
-
-    def get_queryset(self):
-
-        return self.queryset
+    def perform_create(self, serializer):
+        if self.request.user.is_authenticated:
+            serializer.save(usuario=self.request.user)
+        else:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Debes estar autenticado para registrar movimientos.")

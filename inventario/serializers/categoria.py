@@ -16,7 +16,7 @@ class CategoriaSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'creado_en']
 
     def get_total_productos(self, obj):
-        return obj.products.filter(es_activo=True).count()
+        return obj.productos.filter(es_activo=True).count()
 
     def validate_slug(self, value):
         return slugify(value)

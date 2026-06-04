@@ -15,13 +15,13 @@ from inventario.pagination import StandardPagination
 
 
 class ConjuntoVistasProducto(viewsets.ModelViewSet):
-    queryset           = Producto.objects.select_related('category').all()
+    queryset           = Producto.objects.select_related('categoria').all()
     serializer_class   = SerializerProducto
     permission_classes = [EsStaffOSoloLectura]
     pagination_class   = StandardPagination
     filter_backends    = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class    = FiltroProducto
-    search_fields      = ['nombre', 'descripcion', 'category__name']
+    search_fields      = ['nombre', 'descripcion', 'categoria__name']
     ordering_fields    = ['nombre', 'precio', 'stock', 'creado_en']
     ordering           = ['nombre']
 
