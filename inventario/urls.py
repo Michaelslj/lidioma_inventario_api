@@ -7,7 +7,7 @@ from inventario.views.health import health_check
 from inventario.views.auth import RegisterView, LogoutView
 from inventario.views.user import UserViewSet
 from inventario.views.categoria import CategoriaViewSet
-from inventario.views.product import ConjuntoVistasProducto
+from inventario.views.producto import ConjuntoVistasProducto
 from inventario.views.movimiento_inventario import MovimientoInventarioViewSet 
 from inventario.serializers.auth import CustomTokenView
 
