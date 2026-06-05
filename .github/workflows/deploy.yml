@@ -23,3 +23,5 @@ jobs:
             /opt/lidioma_inventario_api/.venv/bin/python manage.py collectstatic --noinput --clear
             sudo systemctl restart gunicorn-inventario
             sudo systemctl restart nginx
+
+          
