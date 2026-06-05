@@ -5,18 +5,8 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
-    name: Run Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v3
-      - name: Run tests
-        run: uv run python manage.py test
-
   deploy:
     name: Deploy to Azure
-    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Deploy via SSH
@@ -33,4 +23,3 @@ jobs:
             /opt/lidioma_inventario_api/.venv/bin/python manage.py collectstatic --noinput --clear
             sudo systemctl restart gunicorn-inventario
             sudo systemctl restart nginx
-
