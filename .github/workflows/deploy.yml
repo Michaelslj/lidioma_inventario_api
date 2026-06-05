@@ -1,0 +1,35 @@
+name: Lidioma CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - name: Run tests
+        run: uv run python manage.py test
+
+  deploy:
+    name: Deploy to Azure
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /opt/lidioma_inventario_api
+            git pull origin main
+            /opt/lidioma_inventario_api/.venv/bin/uv sync --frozen
+            /opt/lidioma_inventario_api/.venv/bin/python manage.py migrate --noinput
+            /opt/lidioma_inventario_api/.venv/bin/python manage.py collectstatic --noinput --clear
+            sudo systemctl restart gunicorn-inventario
+            sudo systemctl restart nginx
